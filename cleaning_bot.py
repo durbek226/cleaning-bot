@@ -1,6 +1,7 @@
 import os
 import datetime
 import gspread
+import json
 from oauth2client.service_account import ServiceAccountCredentials
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters, CallbackContext
@@ -9,24 +10,26 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fpdf import FPDF
 
-# === Устанавливаем переменные вручную ===
+# === Загрузка .env ===
+load_dotenv()
 TOKEN = "8114967909:AAH8uTGzTgZv9tSosSlCQ4nibvqlDUOCqW8"
 
-# === Google Sheets Setup ===
+# === Google Sheets Setup через переменную среды ===
+google_creds = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
 scope = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
 ]
-creds = ServiceAccountCredentials.from_json_keyfile_name("cleaningbot-firma-3c8cec199501.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_dict(google_creds, scope)
 client = gspread.authorize(creds)
 sheet = client.open("CleaningBot_Orders").sheet1
 
 # === Переменные ===
 clients = {}
 order_counter = 100
-ADMIN_IDS = [1064450470, 1253874719]  # Твой ID и ID сотрудника
+ADMIN_IDS = [1064450470, 1253874719]
 MANAGER_USERNAME = "@rimzi1221"
 
 # === Генерация ID ===
