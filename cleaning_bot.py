@@ -12,7 +12,7 @@ from fpdf import FPDF
 
 # === Загрузка .env ===
 load_dotenv()
-TOKEN = "8114967909:AAH8uTGzTgZv9tSosSlCQ4nibvqlDUOCqW8"
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 # === Google Sheets Setup через переменную среды ===
 google_creds = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
